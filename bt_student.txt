@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+contract StudentData {
+
+struct Student {
+string name;
+uint256 rollno;
+}
+
+Student[] public studentArr;
+
+function addStudent(string memory name, uint256 rollno) public {
+
+for (uint i = 0; i < studentArr.length; i++) {
+if (studentArr[i].rollno == rollno) {
+revert("Student already exists");
+}
+}
+
+studentArr.push(Student(name, rollno));
+}
+
+function getStudentLength() public view returns (uint) {
+return studentArr.length;
+}
+
+function displayAllStudents() public view returns (Student[] memory) {
+return studentArr;
+}
+
+function getStudentByIndex(uint idx) public view returns (Student memory) {
+require(idx < studentArr.length, "Index out of bound");
+return studentArr[idx];
+}
+
+fallback() external payable {}
+
+receive() external payable {}
+}

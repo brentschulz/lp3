@@ -1,0 +1,89 @@
+import java.util.PriorityQueue;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Comparator;
+public class A2 {
+
+    static class HuffmanNode {
+        char data;
+        int frequency;
+        HuffmanNode left;
+        HuffmanNode right;
+        public HuffmanNode(char data, int frequency) {
+            this.data = data;
+            this.frequency = frequency;
+            this.left = null;
+            this.right = null;
+        }
+        public HuffmanNode(int frequency, HuffmanNode left, HuffmanNode right) {
+            this.data = '\0';
+            this.frequency = frequency;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    static class FrequencyComparator implements Comparator<HuffmanNode> {
+        public int compare(HuffmanNode x, HuffmanNode y) {
+
+            return x.frequency - y.frequency;
+        }
+    }
+
+    public static HuffmanNode buildHuffmanTree(HashMap<Character, Integer> charFrequencies) {
+
+        PriorityQueue<HuffmanNode> minHeap = new PriorityQueue<>(new FrequencyComparator());
+
+        for (Map.Entry<Character, Integer> entry : charFrequencies.entrySet()) {
+            minHeap.add(new HuffmanNode(entry.getKey(), entry.getValue()));
+        }
+
+        while (minHeap.size() > 1) {
+
+            HuffmanNode x = minHeap.poll();
+            HuffmanNode y = minHeap.poll();
+
+            HuffmanNode newNode = new HuffmanNode(x.frequency + y.frequency, x, y);
+
+            minHeap.add(newNode);
+        }
+
+        return minHeap.poll();
+    }
+
+    public static void generateCodes(HuffmanNode root, String code, Map<Character, String> huffmanCodes) {
+        if (root == null) {
+            return;
+        }
+        if (root.left == null && root.right == null) {
+
+            huffmanCodes.put(root.data, code);
+            return;
+        }
+
+        generateCodes(root.left, code + "0", huffmanCodes);
+
+        generateCodes(root.right, code + "1", huffmanCodes);
+    }
+
+    public static void main(String[] args) {
+
+        HashMap<Character, Integer> frequencies = new HashMap<>();
+        frequencies.put('a', 5);
+        frequencies.put('b', 9);
+        frequencies.put('c', 12);
+        frequencies.put('d', 13);
+        frequencies.put('e', 16);
+        frequencies.put('f', 45);
+        HuffmanNode root = buildHuffmanTree(frequencies);
+        Map<Character, String> huffmanCodes = new HashMap<>();
+        generateCodes(root, "", huffmanCodes);
+        System.out.println("Huffman Codes:");
+        System.out.println("Character | Code-Word");
+        System.out.println("---------------------");
+        for (Map.Entry<Character, String> entry : huffmanCodes.entrySet()) {
+            System.out.printf("%-9s | %s\n", entry.getKey(), entry.getValue());
+        }
+
+    }
+}
